@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "routes": [
+    { "src": "/customer", "dest": "/customer.html" },
+    { "src": "/bot", "dest": "/customer.html" },
+    { "src": "/portal", "dest": "/index.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}

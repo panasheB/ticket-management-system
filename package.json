@@ -1,0 +1,19 @@
+{
+  "name": "helpdesk-enterprise-ticket-portal",
+  "version": "1.0.0",
+  "description": "Enterprise Ticket Management Portal",
+  "main": "server/mock-backend.js",
+  "scripts": {
+    "start": "node server/mock-backend.js",
+    "serve": "python3 -m http.server 8080",
+    "backend": "node server/mock-backend.js"
+  },
+  "keywords": [
+    "ticket-management",
+    "helpdesk",
+    "postman-collection",
+    "support-operations"
+  ],
+  "author": "HelpDesk Team",
+  "license": "MIT"
+}
