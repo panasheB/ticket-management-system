@@ -27,7 +27,14 @@ window.Components = (() => {
     user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
     edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
     copy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`,
-    close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`
+    close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    book: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    helpCircle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    thumbsUp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`,
+    thumbsDown: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>`,
+    trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`,
+    eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
   };
 
   const formatDate = (isoString) => {
@@ -128,6 +135,11 @@ window.Components = (() => {
           </a>
 
           <div class="nav-section-title" style="margin-top:8px;">Tools</div>
+          <a class="nav-item ${state.currentView === 'faqs' ? 'active' : ''}" data-nav="faqs">
+            <div class="nav-item-icon" style="color:#6366F1;">${icons.book}</div>
+            <span>Knowledge Base / FAQs</span>
+            <span class="nav-badge" style="background:rgba(99,102,241,0.15);color:#818CF8;">${state.faqs ? state.faqs.length : 0}</span>
+          </a>
           <a class="nav-item ${state.currentView === 'lookup' ? 'active' : ''}" data-nav="lookup">
             <div class="nav-item-icon">${icons.search}</div>
             <span>Ticket Query</span>
@@ -189,6 +201,9 @@ window.Components = (() => {
     } else if (state.currentView === 'api-hub') {
       title = "API Hub & Inspector";
       subtitle = "10 Postman collection endpoints";
+    } else if (state.currentView === 'faqs') {
+      title = "Knowledge Base & FAQs Management";
+      subtitle = `${state.filteredFaqs ? state.filteredFaqs.length : 0} of ${state.faqs ? state.faqs.length : 0} resolution articles & customer troubleshooting guides`;
     }
 
     return `
@@ -998,6 +1013,278 @@ window.Components = (() => {
       `;
     }
 
+    // 5. FAQ Detail & Procedure Preview Modal
+    if (state.activeModal === 'faq-detail') {
+      const faq = state.modalPayload || state.selectedFaq;
+      if (!faq) return '';
+      const res = faq.resolution || {};
+      const procs = Array.isArray(res.procedures) ? res.procedures : [];
+      const prereqs = Array.isArray(res.prerequisites) ? res.prerequisites : [];
+      const links = Array.isArray(res.relatedLinks) ? res.relatedLinks : [];
+      const tags = Array.isArray(faq.tags) ? faq.tags : [];
+      const helpful = Number(faq.helpfulCount) || 0;
+      const notHelpful = Number(faq.notHelpfulCount) || 0;
+      const totalVotes = helpful + notHelpful;
+      const pct = totalVotes > 0 ? Math.round((helpful / totalVotes) * 100) : 100;
+
+      return `
+        <div class="modal-overlay open" id="modal-faq-detail">
+          <div class="modal-dialog" style="max-width:680px;max-height:88vh;display:flex;flex-direction:column;">
+            <div class="modal-header" style="border-bottom:1px solid var(--border-color);padding:10px 14px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="badge-status open" style="font-size:0.6rem;padding:2px 6px;">${faq.category}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted);">${faq.faqId}</span>
+                <span class="channel-pill web" style="font-size:0.58rem;">${faq.difficulty || 'Easy'} • ${faq.estimatedTime || '2 mins'}</span>
+              </div>
+              <button class="drawer-close-btn btn-modal-close">${icons.x}</button>
+            </div>
+
+            <div class="modal-body" style="overflow-y:auto;padding:14px;flex:1;">
+              <h2 style="font-size:1.05rem;font-weight:800;color:var(--text-primary);margin-bottom:6px;line-height:1.35;">
+                ${faq.title}
+              </h2>
+              <p style="font-size:0.75rem;color:var(--text-secondary);line-height:1.5;margin-bottom:12px;">
+                ${faq.summary}
+              </p>
+
+              <!-- Overview & Prerequisites -->
+              <div style="background:var(--bg-tertiary);border-left:3px solid var(--accent-primary);border-radius:4px;padding:8px 12px;margin-bottom:14px;">
+                <div style="font-weight:700;font-size:0.72rem;color:var(--text-primary);margin-bottom:4px;">
+                  Overview &amp; Prerequisites
+                </div>
+                <div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:6px;line-height:1.4;">
+                  ${res.overview || 'Review prerequisites before following resolution procedures.'}
+                </div>
+                ${prereqs.length > 0 ? `
+                  <ul style="margin:0;padding-left:16px;font-size:0.68rem;color:var(--text-tertiary);line-height:1.4;">
+                    ${prereqs.map(p => `<li>${p}</li>`).join('')}
+                  </ul>
+                ` : ''}
+              </div>
+
+              <!-- Step-by-Step Procedures -->
+              <div style="margin-bottom:14px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <h4 style="font-size:0.78rem;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;">
+                    Step-by-Step Resolution Procedures (${procs.length} Steps)
+                  </h4>
+                  <span style="font-size:0.65rem;color:var(--text-muted);">Self-Service Troubleshooting</span>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  ${procs.map((p, idx) => `
+                    <div style="display:flex;gap:10px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:6px;padding:10px;">
+                      <div style="width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.15);color:#6366F1;font-weight:800;font-size:0.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        ${p.step || idx + 1}
+                      </div>
+                      <div style="flex:1;">
+                        <div style="font-size:0.76rem;font-weight:700;color:var(--text-primary);margin-bottom:3px;">
+                          ${p.title}
+                        </div>
+                        <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.45;white-space:pre-line;">
+                          ${p.instruction}
+                        </div>
+                        ${p.tip ? `
+                          <div style="margin-top:6px;background:rgba(245,158,11,0.08);border:1px dashed rgba(245,158,11,0.3);border-radius:4px;padding:4px 8px;font-size:0.66rem;color:#D97706;">
+                            💡 <strong>Tip:</strong> ${p.tip}
+                          </div>
+                        ` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Escalation Advice -->
+              ${res.escalationAdvice ? `
+                <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:6px;padding:8px 12px;margin-bottom:12px;">
+                  <div style="font-weight:700;font-size:0.7rem;color:#DC2626;margin-bottom:2px;">
+                    🚨 Escalation Guidelines
+                  </div>
+                  <div style="font-size:0.68rem;color:var(--text-secondary);line-height:1.4;">
+                    ${res.escalationAdvice}
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Feedback & Tags -->
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:8px;border-top:1px solid var(--border-color);">
+                <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                  <span style="font-size:0.64rem;color:var(--text-muted);margin-right:2px;">Tags:</span>
+                  ${tags.map(t => `
+                    <span style="font-size:0.6rem;padding:1px 5px;border-radius:3px;background:var(--bg-tertiary);color:var(--text-tertiary);">#${t}</span>
+                  `).join('')}
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--text-secondary);">
+                  <span>Was this procedure helpful?</span>
+                  <button class="btn btn-secondary btn-sm btn-vote-faq" data-id="${faq.faqId}" data-type="up" style="padding:2px 6px;">
+                    ${icons.thumbsUp} ${helpful}
+                  </button>
+                  <button class="btn btn-secondary btn-sm btn-vote-faq" data-id="${faq.faqId}" data-type="down" style="padding:2px 6px;">
+                    ${icons.thumbsDown} ${notHelpful}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="border-top:1px solid var(--border-color);padding:8px 14px;">
+              <button class="btn btn-secondary btn-modal-close btn-sm">Close</button>
+              <button class="btn btn-secondary btn-sm btn-edit-faq" data-id="${faq.faqId}">
+                ${icons.edit} Edit FAQ
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 6. Add / Edit FAQ & Procedure Modal
+    if (state.activeModal === 'faq-add-edit') {
+      const existing = state.modalPayload; // null if adding new
+      const isEdit = !!existing;
+      const res = (existing && existing.resolution) ? existing.resolution : {};
+      const procs = (res && Array.isArray(res.procedures) && res.procedures.length > 0)
+        ? res.procedures
+        : [
+            { step: 1, title: "Initial Verification", instruction: "Check system status and ensure network connection is active.", tip: "Verify with registered credentials." },
+            { step: 2, title: "Clear Stale Cache", instruction: "Clear application cache or restart client service.", tip: "Restart application once cache is purged." }
+          ];
+      const prereqs = (res && Array.isArray(res.prerequisites)) ? res.prerequisites.join('\n') : "Active internet connection.\nValid registered user credentials.";
+      const tags = (existing && Array.isArray(existing.tags)) ? existing.tags.join(', ') : "";
+
+      return `
+        <div class="modal-overlay open" id="modal-faq-add-edit">
+          <div class="modal-dialog" style="max-width:720px;max-height:90vh;display:flex;flex-direction:column;">
+            <div class="modal-header" style="border-bottom:1px solid var(--border-color);padding:10px 14px;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="display:flex;color:#6366F1;">${icons.book}</span>
+                <h3 style="font-size:0.88rem;font-weight:700;">
+                  ${isEdit ? `Edit FAQ: ${existing.faqId}` : '+ Add FAQ & Resolution Procedures'}
+                </h3>
+              </div>
+              <button class="drawer-close-btn btn-modal-close">${icons.x}</button>
+            </div>
+
+            <div class="modal-body" style="overflow-y:auto;padding:14px;flex:1;">
+              <input type="hidden" id="faq-form-edit-id" value="${isEdit ? existing.faqId : ''}">
+
+              <div class="form-row">
+                <div class="form-group" style="flex:2;">
+                  <label class="form-label">Question / Issue Title *</label>
+                  <input type="text" id="faq-form-title" class="form-control" placeholder="e.g. How to resolve AUTH-001 mobile login error?" value="${existing ? existing.title : ''}" required>
+                </div>
+                <div class="form-group" style="flex:1;">
+                  <label class="form-label">Category *</label>
+                  <select id="faq-form-category" class="form-control">
+                    <option value="APPLICATION" ${existing && existing.category === 'APPLICATION' ? 'selected' : ''}>Application</option>
+                    <option value="BILLING" ${existing && existing.category === 'BILLING' ? 'selected' : ''}>Billing</option>
+                    <option value="NETWORK" ${existing && existing.category === 'NETWORK' ? 'selected' : ''}>Network & VPN</option>
+                    <option value="HARDWARE" ${existing && existing.category === 'HARDWARE' ? 'selected' : ''}>Hardware</option>
+                    <option value="SECURITY" ${existing && existing.category === 'SECURITY' ? 'selected' : ''}>Security & 2FA</option>
+                    <option value="GENERAL" ${existing && existing.category === 'GENERAL' ? 'selected' : ''}>General</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Subcategory / Error Code</label>
+                  <input type="text" id="faq-form-subcategory" class="form-control" placeholder="e.g. LOGIN_ISSUE or AUTH-001" value="${existing ? existing.subcategory : ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Estimated Resolution Time</label>
+                  <input type="text" id="faq-form-time" class="form-control" placeholder="e.g. 2-3 mins" value="${existing ? existing.estimatedTime : '2-3 mins'}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Difficulty Level</label>
+                  <select id="faq-form-difficulty" class="form-control">
+                    <option value="Easy" ${existing && existing.difficulty === 'Easy' ? 'selected' : ''}>Easy</option>
+                    <option value="Moderate" ${existing && existing.difficulty === 'Moderate' ? 'selected' : ''}>Moderate</option>
+                    <option value="Advanced" ${existing && existing.difficulty === 'Advanced' ? 'selected' : ''}>Advanced</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Status</label>
+                  <select id="faq-form-status" class="form-control">
+                    <option value="PUBLISHED" ${!existing || existing.status === 'PUBLISHED' ? 'selected' : ''}>Published (Active for Bot)</option>
+                    <option value="DRAFT" ${existing && existing.status === 'DRAFT' ? 'selected' : ''}>Draft (Internal Only)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Issue Summary *</label>
+                <textarea id="faq-form-summary" class="form-control" style="min-height:50px;" placeholder="Brief explanation of the cause or problem..." required>${existing ? existing.summary : ''}</textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Prerequisites (One per line)</label>
+                <textarea id="faq-form-prereqs" class="form-control" style="min-height:45px;" placeholder="e.g. Active Wi-Fi or mobile data...">${prereqs}</textarea>
+              </div>
+
+              <!-- Dynamic Procedures Builder -->
+              <div style="background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;padding:10px;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div>
+                    <label class="form-label" style="font-weight:700;color:var(--text-primary);margin:0;">
+                      Step-by-Step Resolution Procedures *
+                    </label>
+                    <span style="font-size:0.65rem;color:var(--text-tertiary);">Steps customers will follow on the bot to fix their issue</span>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-add-faq-step" style="font-size:0.66rem;padding:2px 8px;">
+                    ${icons.plus} + Add Step
+                  </button>
+                </div>
+
+                <div id="faq-procedures-list" style="display:flex;flex-direction:column;gap:8px;">
+                  ${procs.map((p, idx) => `
+                    <div class="faq-step-card" data-step-index="${idx}" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:5px;padding:8px;position:relative;">
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                        <span style="font-weight:700;font-size:0.68rem;color:var(--accent-primary);">
+                          Step <span class="step-num-label">${idx + 1}</span>
+                        </span>
+                        <button type="button" class="btn-remove-faq-step" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:0.68rem;padding:0;">
+                          ${icons.trash}
+                        </button>
+                      </div>
+                      <div style="display:flex;gap:6px;margin-bottom:6px;">
+                        <input type="text" class="form-control step-title-input" placeholder="Step Title (e.g. Clear Application Cache)" value="${p.title || ''}" style="font-size:0.72rem;" required>
+                      </div>
+                      <div style="margin-bottom:6px;">
+                        <textarea class="form-control step-instruction-input" placeholder="Detailed instruction..." style="min-height:44px;font-size:0.7rem;" required>${p.instruction || ''}</textarea>
+                      </div>
+                      <div>
+                        <input type="text" class="form-control step-tip-input" placeholder="Pro-Tip / Note (Optional, e.g. Do not delete offline drafts)" value="${p.tip || ''}" style="font-size:0.68rem;">
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group" style="flex:1;">
+                  <label class="form-label">Search Keywords / Tags (Comma-separated)</label>
+                  <input type="text" id="faq-form-tags" class="form-control" placeholder="e.g. login, mobile, auth-001, android" value="${tags}">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Escalation Advice (If self-service fails)</label>
+                <input type="text" id="faq-form-escalation" class="form-control" placeholder="e.g. If problem persists after Step 4, submit a ticket under APPLICATION category." value="${res.escalationAdvice || ''}">
+              </div>
+            </div>
+
+            <div class="modal-footer" style="border-top:1px solid var(--border-color);padding:8px 14px;">
+              <button class="btn btn-secondary btn-modal-close btn-sm">Cancel</button>
+              <button class="btn btn-primary btn-sm" id="btn-submit-faq" style="background:#6366F1;border-color:#4F46E5;">
+                ${isEdit ? 'Save Changes' : 'Publish FAQ & Procedures'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     return '';
   };
 
@@ -1199,6 +1486,224 @@ window.Components = (() => {
     `;
   };
 
+  // Knowledge Base & FAQ Management View (Service Provider & Staff Operations)
+  const renderFaqManagement = (state) => {
+    const metrics = (state && typeof state.getFaqMetrics === 'function')
+      ? state.getFaqMetrics()
+      : { total: 0, published: 0, draft: 0, totalViews: 0, totalHelpful: 0, totalNotHelpful: 0, satisfactionRate: 95 };
+    const faqs = (state && Array.isArray(state.filteredFaqs)) ? state.filteredFaqs : [];
+
+    return `
+      <div class="view-content">
+        <!-- KPI Metrics Bar -->
+        <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 10px;">
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(99,102,241,0.12);color:#6366F1;">
+              ${icons.book}
+            </div>
+            <div>
+              <div class="kpi-value">${metrics.total}</div>
+              <div class="kpi-label">Total Articles</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(16,185,129,0.12);color:#10B981;">
+              ${icons.checkCircle}
+            </div>
+            <div>
+              <div class="kpi-value">${metrics.published}</div>
+              <div class="kpi-label">Published for Bot</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(59,130,246,0.12);color:#3B82F6;">
+              ${icons.eye}
+            </div>
+            <div>
+              <div class="kpi-value">${metrics.totalViews}</div>
+              <div class="kpi-label">Customer Views</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(245,158,11,0.12);color:#F59E0B;">
+              ${icons.thumbsUp}
+            </div>
+            <div>
+              <div class="kpi-value">${metrics.satisfactionRate}%</div>
+              <div class="kpi-label">Helpful (${metrics.totalHelpful} 👍 / ${metrics.totalNotHelpful} 👎)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Action Toolbar -->
+        <div class="table-card" style="padding:8px 10px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:260px;">
+              <div style="position:relative;flex:1;max-width:280px;">
+                <input 
+                  type="text" 
+                  id="faq-search-input" 
+                  class="form-control" 
+                  placeholder="Search questions, procedures, tags..." 
+                  value="${(state.faqFilters && state.faqFilters.search) ? state.faqFilters.search : ''}"
+                  style="font-size:0.72rem;padding-left:24px;"
+                >
+                <span style="position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--text-muted);display:flex;width:12px;height:12px;">
+                  ${icons.search}
+                </span>
+              </div>
+
+              <select id="faq-category-select" class="form-control" style="width:120px;font-size:0.7rem;">
+                <option value="ALL" ${state.faqFilters && state.faqFilters.category === 'ALL' ? 'selected' : ''}>All Categories</option>
+                <option value="APPLICATION" ${state.faqFilters && state.faqFilters.category === 'APPLICATION' ? 'selected' : ''}>Application</option>
+                <option value="BILLING" ${state.faqFilters && state.faqFilters.category === 'BILLING' ? 'selected' : ''}>Billing</option>
+                <option value="NETWORK" ${state.faqFilters && state.faqFilters.category === 'NETWORK' ? 'selected' : ''}>Network & VPN</option>
+                <option value="HARDWARE" ${state.faqFilters && state.faqFilters.category === 'HARDWARE' ? 'selected' : ''}>Hardware</option>
+                <option value="SECURITY" ${state.faqFilters && state.faqFilters.category === 'SECURITY' ? 'selected' : ''}>Security & 2FA</option>
+                <option value="GENERAL" ${state.faqFilters && state.faqFilters.category === 'GENERAL' ? 'selected' : ''}>General</option>
+              </select>
+
+              <select id="faq-status-select" class="form-control" style="width:105px;font-size:0.7rem;">
+                <option value="ALL" ${state.faqFilters && state.faqFilters.status === 'ALL' ? 'selected' : ''}>All Status</option>
+                <option value="PUBLISHED" ${state.faqFilters && state.faqFilters.status === 'PUBLISHED' ? 'selected' : ''}>Published</option>
+                <option value="DRAFT" ${state.faqFilters && state.faqFilters.status === 'DRAFT' ? 'selected' : ''}>Draft</option>
+              </select>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:6px;">
+              <button class="btn btn-secondary btn-sm" id="btn-reset-faqs" title="Restore seed sample FAQs">
+                ${icons.refresh} Reset Defaults
+              </button>
+              <button class="btn btn-primary btn-sm" id="btn-open-add-faq" style="background:#6366F1;border-color:#4F46E5;font-weight:700;">
+                ${icons.plus} + Add FAQ &amp; Procedure
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQs Table Card -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="tickets-table">
+              <thead>
+                <tr>
+                  <th style="width:110px;">FAQ ID</th>
+                  <th>Issue / Question &amp; Summary</th>
+                  <th style="width:110px;">Category</th>
+                  <th style="width:90px;">Procedures</th>
+                  <th style="width:100px;">Est. Time</th>
+                  <th style="width:110px;">Helpful Votes</th>
+                  <th style="width:85px;">Status</th>
+                  <th style="width:90px;">Updated</th>
+                  <th style="width:110px;text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${faqs.length === 0 ? `
+                  <tr>
+                    <td colspan="9" style="text-align:center;padding:32px 14px;color:var(--text-muted);">
+                      <div style="margin-bottom:6px;color:#6366F1;">${icons.book}</div>
+                      <div style="font-weight:700;font-size:0.78rem;margin-bottom:4px;">No FAQs match your search filters</div>
+                      <div style="font-size:0.68rem;">Try clearing your search or add a new troubleshooting procedure above.</div>
+                    </td>
+                  </tr>
+                ` : faqs.map(f => {
+                  const procs = (f.resolution && Array.isArray(f.resolution.procedures)) ? f.resolution.procedures : [];
+                  const helpful = Number(f.helpfulCount) || 0;
+                  const notHelpful = Number(f.notHelpfulCount) || 0;
+                  const totalV = helpful + notHelpful;
+                  const pct = totalV > 0 ? Math.round((helpful / totalV) * 100) : 100;
+                  const isPublished = f.status === 'PUBLISHED';
+
+                  return `
+                    <tr class="faq-table-row" data-id="${f.faqId}">
+                      <td>
+                        <span class="ticket-id-link" style="color:#6366F1;">
+                          ${f.faqId}
+                        </span>
+                      </td>
+                      <td>
+                        <div style="font-weight:700;color:var(--text-primary);font-size:0.73rem;margin-bottom:2px;line-height:1.35;">
+                          ${f.title}
+                        </div>
+                        <div style="color:var(--text-tertiary);font-size:0.65rem;line-height:1.3;max-width:440px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                          ${f.summary}
+                        </div>
+                        ${Array.isArray(f.tags) && f.tags.length > 0 ? `
+                          <div style="display:flex;gap:3px;margin-top:3px;flex-wrap:wrap;">
+                            ${f.tags.slice(0, 4).map(t => `
+                              <span style="font-size:0.55rem;padding:0 4px;border-radius:2px;background:var(--bg-tertiary);color:var(--text-tertiary);">#${t}</span>
+                            `).join('')}
+                          </div>
+                        ` : ''}
+                      </td>
+                      <td>
+                        <span class="badge-status open" style="font-size:0.58rem;padding:1px 5px;">
+                          ${f.category}
+                        </span>
+                        ${f.subcategory ? `
+                          <div style="font-size:0.56rem;color:var(--text-muted);margin-top:2px;font-family:'JetBrains Mono',monospace;">
+                            ${f.subcategory}
+                          </div>
+                        ` : ''}
+                      </td>
+                      <td>
+                        <span class="channel-pill web" style="font-size:0.58rem;cursor:pointer;" title="Click to view step procedures">
+                          📋 ${procs.length} Step${procs.length !== 1 ? 's' : ''}
+                        </span>
+                      </td>
+                      <td>
+                        <span style="font-size:0.66rem;color:var(--text-secondary);font-weight:600;">
+                          ⏱️ ${f.estimatedTime || '2 mins'}
+                        </span>
+                        <div style="font-size:0.56rem;color:var(--text-muted);">${f.difficulty || 'Easy'}</div>
+                      </td>
+                      <td>
+                        <span style="font-size:0.66rem;color:#10B981;font-weight:700;">
+                          👍 ${helpful}
+                        </span>
+                        <span style="font-size:0.66rem;color:#EF4444;font-weight:700;margin-left:4px;">
+                          👎 ${notHelpful}
+                        </span>
+                        <div style="font-size:0.56rem;color:var(--text-muted);">${pct}% helpful</div>
+                      </td>
+                      <td>
+                        <span class="badge-status ${isPublished ? 'open' : 'closed'}" style="font-size:0.56rem;padding:1px 4px;">
+                          ${isPublished ? '● PUBLISHED' : '○ DRAFT'}
+                        </span>
+                      </td>
+                      <td>
+                        <span style="font-size:0.62rem;color:var(--text-muted);">
+                          ${formatRelativeTime(f.lastUpdated)}
+                        </span>
+                      </td>
+                      <td style="text-align:right;">
+                        <div style="display:inline-flex;gap:4px;">
+                          <button class="btn btn-secondary btn-sm btn-view-faq-proc" data-id="${f.faqId}" title="View Resolution Procedures" style="padding:2px 5px;">
+                            ${icons.eye}
+                          </button>
+                          <button class="btn btn-secondary btn-sm btn-edit-faq" data-id="${f.faqId}" title="Edit FAQ" style="padding:2px 5px;">
+                            ${icons.edit}
+                          </button>
+                          <button class="btn btn-secondary btn-sm btn-delete-faq" data-id="${f.faqId}" title="Delete FAQ" style="padding:2px 5px;color:#EF4444;">
+                            ${icons.trash}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
   return {
     icons,
     renderSidebar,
@@ -1209,6 +1714,7 @@ window.Components = (() => {
     renderModals,
     renderLookupView,
     renderApiHub,
+    renderFaqManagement,
     renderStatusBadge,
     renderPriorityBadge,
     renderChannelPill,

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderModals,
     renderLookupView,
     renderApiHub,
+    renderFaqManagement,
     icons
   } = window.Components;
 
@@ -63,10 +64,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   window.showToast = showToast;
 
-  // Initial Fetch of Tickets (Strict Live Backend Mode)
+  // Initial Fetch of Tickets & FAQs (Strict Live Backend / Local Store)
   async function loadInitialData() {
     state.isLoading = true;
     try {
+      // Load Tickets
       const data = await api.getAllTickets();
       const tickets = api._extractTickets ? api._extractTickets(data) : (Array.isArray(data) ? data : (data.data || data.tickets || []));
       state.setTickets(tickets);
@@ -81,13 +83,20 @@ document.addEventListener('DOMContentLoaded', async () => {
           'CORS Error: Your backend must allow browser requests. See fix below.',
           'error'
         );
-        // Show inline CORS fix banner in the content area
         window._lastApiError = 'cors';
       } else {
         window._lastApiError = errMsg;
         showToast(`Cannot reach backend: ${errMsg}`, 'error');
       }
       state.setTickets([]);
+    }
+
+    try {
+      // Load Knowledge Base & FAQs
+      const faqs = await api.getAllFaqs();
+      state.setFaqs(faqs);
+    } catch (faqErr) {
+      console.warn("Failed to load FAQs:", faqErr);
     } finally {
       state.isLoading = false;
       renderApp();
@@ -118,6 +127,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         contentEl.innerHTML = renderLookupView(state);
       } else if (state.currentView === 'api-hub') {
         contentEl.innerHTML = renderApiHub(state);
+      } else if (state.currentView === 'faqs') {
+        contentEl.innerHTML = renderFaqManagement(state);
       }
     }
 
@@ -612,6 +623,198 @@ document.addEventListener('DOMContentLoaded', async () => {
       const id = getFirstTicketId();
       if (id) testEp('POST cancel', () => api.cancelTicket(id, { cancelledBy: "ADMIN-001", reason: "API Runner cancellation" }));
     }
+
+    // 21. FAQs & Knowledge Base Management Handlers
+    if (e.target.closest('#btn-open-add-faq')) {
+      state.openModal('faq-add-edit', null);
+      return;
+    }
+
+    const editFaqBtn = e.target.closest('.btn-edit-faq');
+    if (editFaqBtn) {
+      const id = editFaqBtn.getAttribute('data-id');
+      const faq = (state.faqs || []).find(f => f && (f.faqId === id || String(f._id) === id));
+      if (faq) state.openModal('faq-add-edit', faq);
+      return;
+    }
+
+    const viewFaqProcBtn = e.target.closest('.btn-view-faq-proc');
+    if (viewFaqProcBtn) {
+      const id = viewFaqProcBtn.getAttribute('data-id');
+      const faq = (state.faqs || []).find(f => f && (f.faqId === id || String(f._id) === id));
+      if (faq) {
+        faq.viewsCount = (Number(faq.viewsCount) || 0) + 1;
+        state.openModal('faq-detail', faq);
+      }
+      return;
+    }
+
+    const faqRow = e.target.closest('.faq-table-row');
+    if (faqRow && !e.target.closest('button')) {
+      const id = faqRow.getAttribute('data-id');
+      const faq = (state.faqs || []).find(f => f && (f.faqId === id || String(f._id) === id));
+      if (faq) {
+        faq.viewsCount = (Number(faq.viewsCount) || 0) + 1;
+        state.openModal('faq-detail', faq);
+      }
+      return;
+    }
+
+    const deleteFaqBtn = e.target.closest('.btn-delete-faq');
+    if (deleteFaqBtn) {
+      const id = deleteFaqBtn.getAttribute('data-id');
+      if (confirm(`Are you sure you want to permanently delete FAQ ${id}?`)) {
+        try {
+          await api.deleteFaq(id);
+          state.setFaqs(await api.getAllFaqs());
+          showToast(`Deleted FAQ ${id}`, 'info');
+        } catch (err) {
+          showToast(`Error deleting FAQ: ${err.message}`, 'error');
+        }
+      }
+      return;
+    }
+
+    if (e.target.closest('#btn-reset-faqs')) {
+      api.resetMockData();
+      state.setFaqs(await api.getAllFaqs());
+      showToast('Knowledge Base reset to default sample FAQs & procedures!', 'success');
+      return;
+    }
+
+    const voteFaqBtn = e.target.closest('.btn-vote-faq');
+    if (voteFaqBtn) {
+      const id = voteFaqBtn.getAttribute('data-id');
+      const isUp = voteFaqBtn.getAttribute('data-type') === 'up';
+      try {
+        await api.voteFaq(id, isUp);
+        state.setFaqs(await api.getAllFaqs());
+        showToast(isUp ? 'Helpful rating registered 👍' : 'Feedback recorded 👎', 'info');
+      } catch (err) {
+        console.warn(err);
+      }
+      return;
+    }
+
+    // Dynamic Step adding inside FAQ Modal
+    if (e.target.closest('#btn-add-faq-step')) {
+      const list = document.getElementById('faq-procedures-list');
+      if (list) {
+        const stepCards = list.querySelectorAll('.faq-step-card');
+        const nextIdx = stepCards.length;
+        const newCard = document.createElement('div');
+        newCard.className = 'faq-step-card';
+        newCard.setAttribute('data-step-index', nextIdx);
+        newCard.style.cssText = 'background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:5px;padding:8px;position:relative;';
+        newCard.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-weight:700;font-size:0.68rem;color:var(--accent-primary);">
+              Step <span class="step-num-label">${nextIdx + 1}</span>
+            </span>
+            <button type="button" class="btn-remove-faq-step" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:0.68rem;padding:0;">
+              ${icons.trash}
+            </button>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <input type="text" class="form-control step-title-input" placeholder="Step Title (e.g. Verify Credentials)" style="font-size:0.72rem;" required>
+          </div>
+          <div style="margin-bottom:6px;">
+            <textarea class="form-control step-instruction-input" placeholder="Detailed instruction..." style="min-height:44px;font-size:0.7rem;" required></textarea>
+          </div>
+          <div>
+            <input type="text" class="form-control step-tip-input" placeholder="Pro-Tip / Note (Optional)" style="font-size:0.68rem;">
+          </div>
+        `;
+        list.appendChild(newCard);
+      }
+      return;
+    }
+
+    const removeStepBtn = e.target.closest('.btn-remove-faq-step');
+    if (removeStepBtn) {
+      const card = removeStepBtn.closest('.faq-step-card');
+      const list = document.getElementById('faq-procedures-list');
+      if (card && list) {
+        card.remove();
+        list.querySelectorAll('.faq-step-card').forEach((c, idx) => {
+          c.setAttribute('data-step-index', idx);
+          const lbl = c.querySelector('.step-num-label');
+          if (lbl) lbl.textContent = idx + 1;
+        });
+      }
+      return;
+    }
+
+    // Submit FAQ Form (Add or Edit)
+    if (e.target.closest('#btn-submit-faq')) {
+      const editIdEl = document.getElementById('faq-form-edit-id');
+      const editId = editIdEl ? editIdEl.value.trim() : '';
+      const titleEl = document.getElementById('faq-form-title');
+      const title = titleEl ? titleEl.value.trim() : '';
+
+      if (!title) {
+        showToast('Please enter an FAQ question / title', 'error');
+        return;
+      }
+
+      const category = (document.getElementById('faq-form-category') || {}).value || 'APPLICATION';
+      const subcategory = (document.getElementById('faq-form-subcategory') || {}).value || '';
+      const estimatedTime = (document.getElementById('faq-form-time') || {}).value || '2-3 mins';
+      const difficulty = (document.getElementById('faq-form-difficulty') || {}).value || 'Easy';
+      const status = (document.getElementById('faq-form-status') || {}).value || 'PUBLISHED';
+      const summary = (document.getElementById('faq-form-summary') || {}).value || '';
+      const prereqsText = (document.getElementById('faq-form-prereqs') || {}).value || '';
+      const prerequisites = prereqsText.split('\n').map(s => s.trim()).filter(Boolean);
+      const tagsText = (document.getElementById('faq-form-tags') || {}).value || '';
+      const tags = tagsText.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+      const escalationAdvice = (document.getElementById('faq-form-escalation') || {}).value || '';
+
+      const procedures = [];
+      const stepCards = document.querySelectorAll('#faq-procedures-list .faq-step-card');
+      stepCards.forEach((c, idx) => {
+        const sTitle = (c.querySelector('.step-title-input') || {}).value || `Step ${idx + 1}`;
+        const sInst = (c.querySelector('.step-instruction-input') || {}).value || 'Follow instructions.';
+        const sTip = (c.querySelector('.step-tip-input') || {}).value || '';
+        procedures.push({
+          step: idx + 1,
+          title: sTitle,
+          instruction: sInst,
+          tip: sTip
+        });
+      });
+
+      const payload = {
+        title,
+        category,
+        subcategory,
+        estimatedTime,
+        difficulty,
+        status,
+        summary,
+        tags,
+        resolution: {
+          overview: summary,
+          prerequisites,
+          procedures,
+          escalationAdvice
+        }
+      };
+
+      try {
+        if (editId) {
+          await api.updateFaq(editId, payload);
+          showToast(`✓ FAQ ${editId} updated successfully`, 'success');
+        } else {
+          const res = await api.createFaq(payload);
+          showToast(`✓ FAQ ${res.faq ? res.faq.faqId : ''} published successfully!`, 'success');
+        }
+        state.closeModal();
+        state.setFaqs(await api.getAllFaqs());
+      } catch (err) {
+        showToast(`Error saving FAQ: ${err.message}`, 'error');
+      }
+      return;
+    }
   });
 
   // Global Change Events (Dropdowns & Selects)
@@ -637,6 +840,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       showToast(`API Mode set to ${e.target.value.toUpperCase()}`, 'info');
       return;
     }
+    // FAQ Filters
+    if (e.target.id === 'faq-category-select') {
+      state.setFaqFilter('category', e.target.value);
+      return;
+    }
+    if (e.target.id === 'faq-status-select') {
+      state.setFaqFilter('status', e.target.value);
+      return;
+    }
     // Drawer Quick Status Dropdown
     if (e.target.id === 'drawer-select-status') {
       const id = e.target.getAttribute('data-id');
@@ -655,11 +867,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Global Input Search Listener (Debounced)
   let searchTimeout = null;
+  let faqSearchTimeout = null;
   document.addEventListener('input', (e) => {
     if (e.target.id === 'global-search-input') {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
         state.setSearch(e.target.value);
+      }, 200);
+    }
+    if (e.target.id === 'faq-search-input') {
+      clearTimeout(faqSearchTimeout);
+      faqSearchTimeout = setTimeout(() => {
+        state.setFaqSearch(e.target.value);
       }, 200);
     }
   });

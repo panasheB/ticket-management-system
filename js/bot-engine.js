@@ -40,7 +40,10 @@ class HelpDeskBotEngine {
       reopen: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>`,
       alert: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>`,
       settings: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
-      database: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`
+      database: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+      book: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+      thumbsUp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`,
+      thumbsDown: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>`
     };
   }
 
@@ -128,6 +131,9 @@ class HelpDeskBotEngine {
           <button class="strip-pill" data-action="cmd-backend-settings" title="Toggle Mock Mode or change backend URL">
             ${this.icons.database} <span id="strip-mode-label">Mode: ${currentMode === 'real' ? 'Live' : (currentMode === 'mock' ? 'Mock' : 'Auto')}</span>
           </button>
+          <button class="strip-pill highlight-pill" data-action="cmd-faqs" style="border-color:var(--bot-accent);background:var(--bot-accent-light);color:var(--bot-accent);font-weight:700;">
+            ${this.icons.book} 📚 FAQs &amp; Help
+          </button>
           <button class="strip-pill" data-action="cmd-new-ticket">
             ${this.icons.ticket} Log New Ticket
           </button>
@@ -154,6 +160,7 @@ class HelpDeskBotEngine {
         <!-- Mobile Sticky Input Bar -->
         <footer class="bot-input-bar-container">
           <div class="input-suggestions-strip" id="bot-quick-chips">
+            <button class="suggestion-chip" data-text="Browse FAQs" style="border-color:var(--bot-accent);color:var(--bot-accent);font-weight:700;">📚 FAQs &amp; Solutions</button>
             <button class="suggestion-chip" data-text="Log a new ticket">🎟️ New Ticket</button>
             <button class="suggestion-chip" data-text="Check ticket status">🔍 Check Status</button>
             <button class="suggestion-chip" data-text="Switch to mock data">📦 Mock Mode</button>
@@ -411,8 +418,9 @@ class HelpDeskBotEngine {
   sendWelcomeMessage() {
     const custName = this.customer.name ? this.customer.name : 'there';
     this.appendBotMessage({
-      text: `👋 Hello ${custName}! I am your **HelpDesk Support Assistant**. I can help you log, track, and manage your service tickets directly with our technical operations team.`,
+      text: `👋 Hello ${custName}! I am your **HelpDesk Support Assistant**. I can help you search troubleshooting procedures, resolve common issues via our Knowledge Base, or log and track service tickets with our technical operations team.`,
       chips: [
+        { label: '📚 FAQs & Solutions', text: 'Browse FAQs' },
         { label: '🎟️ Log a Ticket', text: 'Log a new ticket' },
         { label: '🔍 Check Ticket Status', text: 'Check ticket status' },
         { label: '💬 Add Comment / Follow-Up', text: 'Add comment to ticket' },
@@ -425,7 +433,9 @@ class HelpDeskBotEngine {
   }
 
   executeTopCommand(action) {
-    if (action === 'cmd-new-ticket') {
+    if (action === 'cmd-faqs') {
+      this.showFaqExplorer();
+    } else if (action === 'cmd-new-ticket') {
       this.startTicketCreationWizard();
     } else if (action === 'cmd-check-status') {
       this.promptForStatusCheck();
@@ -532,6 +542,15 @@ class HelpDeskBotEngine {
     }
 
     // ── Intent Matching ───────────────────────────────────────────────────
+
+    // 0. Knowledge Base & FAQs Intent
+    if (/(faq|faqs|knowledge|troubleshoot|how\s*to|fix|procedure|solution|steps\s*to|guide|resolve|article|help\s*center)/i.test(lower)) {
+      const cleanKeywords = lower
+        .replace(/(how\s*to\s*fix|how\s*to|can\s*i|faq|faqs|troubleshoot|guide|steps|procedure|solution|show\s*me|tell\s*me\s*about)/gi, '')
+        .trim();
+      await this.showFaqExplorer({ search: cleanKeywords });
+      return;
+    }
 
     // 1. Log / Create Ticket Intent
     if (/(create|log|open|new|file|submit|report)\s*(a|an)?\s*(ticket|issue|bug|problem|complaint)?/i.test(lower) || lower === 'new ticket') {
@@ -676,14 +695,14 @@ I couldn't quite match *"${userText}"* with an available support workflow. Pleas
   // =========================================================================
   // Workflow 1: Guided Ticket Creation Wizard
   // =========================================================================
-  startTicketCreationWizard() {
+  startTicketCreationWizard(prefills = {}) {
     this.activeStep = 'CREATE_WIZARD';
     this.draftTicket = {
-      category: 'APPLICATION',
-      priority: 'MEDIUM',
+      category: prefills.category || 'APPLICATION',
+      priority: prefills.priority || 'MEDIUM',
       channel: 'WEB',
-      subject: '',
-      description: '',
+      subject: prefills.subject || '',
+      description: prefills.description || '',
       customerId: this.customer.customerId ? this.customer.customerId : '1234PANASHE',
       customerName: this.customer.name ? this.customer.name : 'Panashe Budzinike',
       phoneNumber: this.customer.phoneNumber ? this.customer.phoneNumber : '0786398208',
@@ -691,7 +710,9 @@ I couldn't quite match *"${userText}"* with an available support workflow. Pleas
     };
 
     this.appendBotMessage({
-      text: `Let's log your service ticket. Please configure the details below or adjust the fields to match your issue:`,
+      text: prefills.subject
+        ? `I've pre-filled your ticket with details from the FAQ. Please review or adjust below to submit to our operations team:`
+        : `Let's log your service ticket. Please configure the details below or adjust the fields to match your issue:`,
       cardType: 'CREATE_WIZARD_FORM',
       cardData: this.draftTicket
     });
@@ -1309,6 +1330,16 @@ I couldn't quite match *"${userText}"* with an available support workflow. Pleas
           });
         }
       }, 300);
+    } else if (act === 'view_faq_proc') {
+      this.showFaqProcedures(val);
+    } else if (act === 'filter_faq_cat') {
+      this.showFaqExplorer({ category: val });
+    } else if (act === 'vote_faq_helpful') {
+      this.voteFaqFromBot(val, true);
+    } else if (act === 'vote_faq_unhelpful') {
+      this.voteFaqFromBot(val, false);
+    } else if (act === 'log_ticket_from_faq') {
+      this.logTicketFromFaq(val);
     }
   }
 
@@ -1329,6 +1360,10 @@ I couldn't quite match *"${userText}"* with an available support workflow. Pleas
       return this.renderTicketsList(data);
     } else if (type === 'BACKEND_SETTINGS_CARD') {
       return this.renderBackendSettingsCard(data);
+    } else if (type === 'FAQ_EXPLORER_CARD') {
+      return this.renderFaqExplorerCard(data);
+    } else if (type === 'FAQ_PROCEDURE_CARD') {
+      return this.renderFaqProcedureCard(data);
     }
     return '';
   }
@@ -1775,6 +1810,319 @@ I couldn't quite match *"${userText}"* with an available support workflow. Pleas
           <button type="button" class="btn-card-action" id="btn-reset-mock-store" style="padding:2px 8px;">
             ${this.icons.refresh} Reset Mock Store
           </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // Knowledge Base & FAQ Methods (Customer Self-Service)
+  // =========================================================================
+  async showFaqExplorer({ category = 'ALL', search = '' } = {}) {
+    let faqs = [];
+    if (window.apiClient) {
+      try {
+        faqs = await window.apiClient.searchFaqs(search, category);
+      } catch (e) {
+        faqs = (window.SEED_FAQS || []);
+      }
+    } else {
+      faqs = (window.SEED_FAQS || []);
+    }
+
+    // Filter published only for customers
+    faqs = faqs.filter(f => !f.status || f.status === 'PUBLISHED');
+
+    const catLabel = category === 'ALL' ? 'All Topics' : category;
+    const searchLabel = search ? ` matching "${search}"` : '';
+
+    this.appendBotMessage({
+      text: `📚 **HelpDesk Knowledge Base & FAQs** (${catLabel}${searchLabel})\n\nSelect a topic below to view verified step-by-step resolution procedures, or use the search bar:`,
+      cardType: 'FAQ_EXPLORER_CARD',
+      cardData: {
+        faqs,
+        currentCategory: category,
+        searchQuery: search
+      },
+      chips: [
+        { label: '📱 Application', act: 'filter_faq_cat', val: 'APPLICATION' },
+        { label: '💳 Billing', act: 'filter_faq_cat', val: 'BILLING' },
+        { label: '🌐 Network', act: 'filter_faq_cat', val: 'NETWORK' },
+        { label: '⚙️ Hardware', act: 'filter_faq_cat', val: 'HARDWARE' },
+        { label: '🔒 Security', act: 'filter_faq_cat', val: 'SECURITY' },
+        { label: '📋 All FAQs', act: 'filter_faq_cat', val: 'ALL' },
+        { label: '🎟️ Log a Ticket', text: 'Log a new ticket' }
+      ]
+    });
+  }
+
+  async showFaqProcedures(faqId) {
+    let faq = null;
+    if (window.apiClient) {
+      try {
+        faq = await window.apiClient.getFaqById(faqId);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    if (!faq) {
+      const list = window.SEED_FAQS || [];
+      faq = list.find(f => f.faqId === faqId);
+    }
+
+    if (!faq) {
+      this.appendBotMessage({
+        text: `⚠️ Sorry, I could not find resolution procedures for article **${faqId}**. Would you like to log a ticket instead?`,
+        chips: [
+          { label: '🎟️ Log a Ticket', text: 'Log a new ticket' },
+          { label: '📚 Back to FAQs', act: 'filter_faq_cat', val: 'ALL' }
+        ]
+      });
+      return;
+    }
+
+    this.appendBotMessage({
+      text: `📖 **Resolution Procedures: ${faq.title}**\n\nFollow these step-by-step procedures to resolve this issue:`,
+      cardType: 'FAQ_PROCEDURE_CARD',
+      cardData: faq,
+      chips: [
+        { label: '👍 Yes, this fixed it!', act: 'vote_faq_helpful', val: faq.faqId },
+        { label: '👎 No, still having issues', act: 'vote_faq_unhelpful', val: faq.faqId },
+        { label: '🎟️ Log Ticket for this Issue', act: 'log_ticket_from_faq', val: faq.faqId },
+        { label: '📚 Browse More FAQs', act: 'filter_faq_cat', val: 'ALL' }
+      ]
+    });
+  }
+
+  async voteFaqFromBot(faqId, isHelpful) {
+    if (window.apiClient) {
+      try {
+        await window.apiClient.voteFaq(faqId, isHelpful);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    if (isHelpful) {
+      this.showMiniToast('Thank you for your feedback! 👍');
+      this.appendBotMessage({
+        text: `🎉 **Awesome! I'm glad that resolved your issue!**\n\nYour feedback helps us continuously improve our self-service guides. Let me know if you need help with anything else!`,
+        chips: [
+          { label: '🔍 Check Ticket Status', text: 'Check ticket status' },
+          { label: '📋 View My Tickets', text: 'List all my tickets' },
+          { label: '📚 Browse Other FAQs', act: 'filter_faq_cat', val: 'ALL' }
+        ]
+      });
+    } else {
+      this.showMiniToast('Feedback noted. We are here to help.');
+      this.appendBotMessage({
+        text: `I understand! Troubleshooting can be tricky. Would you like me to open a ticket for our technical operations team with these details pre-filled?`,
+        chips: [
+          { label: '🎟️ Yes, Log Ticket for this Issue', act: 'log_ticket_from_faq', val: faqId },
+          { label: '🔍 Search More FAQs', act: 'filter_faq_cat', val: 'ALL' }
+        ]
+      });
+    }
+  }
+
+  async logTicketFromFaq(faqId) {
+    let faq = null;
+    if (window.apiClient) {
+      try {
+        faq = await window.apiClient.getFaqById(faqId);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    if (!faq) {
+      faq = (window.SEED_FAQS || []).find(f => f.faqId === faqId);
+    }
+
+    const cat = faq ? faq.category : 'APPLICATION';
+    const subj = faq ? `Assistance Needed: ${faq.title}` : 'Troubleshooting assistance needed';
+    const desc = faq 
+      ? `Customer followed self-service procedures in ${faq.faqId} ("${faq.title}") but the issue remains unresolved.\n\nIssue Summary: ${faq.summary}\n\nPlease escalate to technician for manual inspection.`
+      : 'Issue encountered following self-service documentation.';
+
+    this.startTicketCreationWizard({ category: cat, subject: subj, description: desc });
+  }
+
+  renderFaqExplorerCard(data) {
+    const cardId = 'faq-card-' + Date.now();
+    const faqs = data.faqs || [];
+    const currentCat = data.currentCategory || 'ALL';
+    const query = data.searchQuery || '';
+
+    setTimeout(() => {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+
+      const sInput = card.querySelector('.faq-card-search-input');
+      const sBtn = card.querySelector('.btn-faq-card-search');
+
+      const doSearch = () => {
+        if (!sInput) return;
+        const val = sInput.value.trim();
+        this.showFaqExplorer({ category: currentCat, search: val });
+      };
+
+      if (sInput) {
+        sInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            doSearch();
+          }
+        });
+      }
+      if (sBtn) {
+        sBtn.addEventListener('click', doSearch);
+      }
+    }, 50);
+
+    return `
+      <div class="bot-embedded-card" id="${cardId}">
+        <div class="card-title-row">
+          <h4>${this.icons.book} Knowledge Base (${faqs.length} Articles)</h4>
+          <span style="font-size:0.68rem;color:var(--bot-text-muted);">Self-Service Resolutions</span>
+        </div>
+
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
+          <input 
+            type="text" 
+            class="bot-input faq-card-search-input" 
+            placeholder="Search FAQs e.g. login, vpn, billing..." 
+            value="${query}"
+            style="font-size:0.75rem;"
+          >
+          <button type="button" class="btn-card-action btn-faq-card-search" style="padding:4px 10px;white-space:nowrap;color:var(--bot-accent);border-color:var(--bot-accent);font-weight:700;">
+            ${this.icons.search} Search
+          </button>
+        </div>
+
+        <div style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
+          ${faqs.length === 0 ? `
+            <div style="text-align:center;padding:18px;color:var(--bot-text-muted);font-size:0.75rem;">
+              No FAQs found matching "${query}". Try another keyword or category above.
+            </div>
+          ` : faqs.map(f => {
+            const procs = (f.resolution && Array.isArray(f.resolution.procedures)) ? f.resolution.procedures : [];
+            return `
+              <div style="background:var(--bot-surface-2);border:1px solid var(--bot-border);border-radius:6px;padding:8px 10px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
+                  <span style="font-size:0.62rem;font-weight:700;color:var(--bot-accent);background:var(--bot-accent-light);padding:1px 5px;border-radius:3px;">
+                    ${f.category}
+                  </span>
+                  <span style="font-size:0.62rem;color:var(--bot-text-muted);">
+                    ⏱️ ${f.estimatedTime || '2 mins'} • ${f.difficulty || 'Easy'}
+                  </span>
+                </div>
+                <div style="font-weight:700;font-size:0.76rem;color:var(--bot-text);margin-bottom:3px;line-height:1.35;">
+                  ${f.title}
+                </div>
+                <div style="font-size:0.68rem;color:var(--bot-text-muted);line-height:1.35;margin-bottom:6px;">
+                  ${f.summary}
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                  <span style="font-size:0.64rem;color:var(--bot-text-muted);">
+                    👍 ${f.helpfulCount || 0} found this helpful
+                  </span>
+                  <button type="button" class="btn-card-action" data-action="view_faq_proc" data-id="${f.faqId}" style="padding:3px 8px;font-size:0.68rem;color:var(--bot-accent);border-color:var(--bot-accent);font-weight:700;">
+                    📋 View ${procs.length} Steps →
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  renderFaqProcedureCard(faq) {
+    const cardId = 'faq-proc-' + Date.now();
+    const res = faq.resolution || {};
+    const procs = Array.isArray(res.procedures) ? res.procedures : [];
+    const prereqs = Array.isArray(res.prerequisites) ? res.prerequisites : [];
+
+    return `
+      <div class="bot-embedded-card" id="${cardId}">
+        <div class="card-title-row">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:0.62rem;font-weight:700;color:var(--bot-accent);background:var(--bot-accent-light);padding:1px 6px;border-radius:3px;">
+              ${faq.category}
+            </span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--bot-text-muted);">${faq.faqId}</span>
+          </div>
+          <span style="font-size:0.65rem;color:var(--bot-text-muted);">
+            ⏱️ ${faq.estimatedTime || '2-3 mins'} • ${faq.difficulty || 'Easy'}
+          </span>
+        </div>
+
+        <h4 style="font-size:0.86rem;font-weight:800;color:var(--bot-text);margin:6px 0 4px;line-height:1.35;">
+          ${faq.title}
+        </h4>
+
+        <div style="font-size:0.72rem;color:var(--bot-text-muted);line-height:1.4;margin-bottom:8px;">
+          ${faq.summary}
+        </div>
+
+        ${prereqs.length > 0 ? `
+          <div style="background:var(--bot-surface-2);border-left:3px solid var(--bot-accent);border-radius:4px;padding:6px 10px;margin-bottom:10px;">
+            <div style="font-size:0.66rem;font-weight:700;color:var(--bot-text);margin-bottom:2px;">Prerequisites:</div>
+            <ul style="margin:0;padding-left:14px;font-size:0.66rem;color:var(--bot-text-muted);line-height:1.4;">
+              ${prereqs.map(p => `<li>${p}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+
+        <!-- Numbered Step Procedures -->
+        <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:var(--bot-text);margin-bottom:6px;letter-spacing:0.5px;">
+          Step-by-Step Resolution Procedures:
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">
+          ${procs.map((p, idx) => `
+            <div style="background:var(--bot-surface-2);border:1px solid var(--bot-border);border-radius:6px;padding:8px 10px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+                <span style="width:18px;height:18px;border-radius:50%;background:var(--bot-accent);color:#FFFFFF;font-weight:800;font-size:0.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  ${p.step || idx + 1}
+                </span>
+                <span style="font-weight:700;font-size:0.75rem;color:var(--bot-text);">
+                  ${p.title}
+                </span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--bot-text-muted);line-height:1.45;padding-left:24px;white-space:pre-line;">
+                ${p.instruction}
+              </div>
+              ${p.tip ? `
+                <div style="margin-top:4px;margin-left:24px;background:rgba(245,158,11,0.1);border:1px dashed rgba(245,158,11,0.3);border-radius:4px;padding:3px 8px;font-size:0.65rem;color:#D97706;">
+                  💡 <strong>Tip:</strong> ${p.tip}
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+
+        ${res.escalationAdvice ? `
+          <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:5px;padding:6px 10px;margin-bottom:10px;">
+            <div style="font-size:0.66rem;font-weight:700;color:#EF4444;margin-bottom:2px;">🚨 Still not working?</div>
+            <div style="font-size:0.66rem;color:var(--bot-text-muted);line-height:1.35;">${res.escalationAdvice}</div>
+          </div>
+        ` : ''}
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:6px;border-top:1px solid var(--bot-border);flex-wrap:wrap;gap:6px;">
+          <span style="font-size:0.68rem;color:var(--bot-text-muted);">Did this resolve your issue?</span>
+          <div style="display:flex;gap:4px;">
+            <button type="button" class="btn-card-action" data-action="vote_faq_helpful" data-id="${faq.faqId}" style="padding:3px 8px;font-size:0.68rem;color:#10B981;border-color:#10B981;">
+              👍 Yes, resolved
+            </button>
+            <button type="button" class="btn-card-action" data-action="vote_faq_unhelpful" data-id="${faq.faqId}" style="padding:3px 8px;font-size:0.68rem;color:#EF4444;border-color:#EF4444;">
+              👎 No, need help
+            </button>
+            <button type="button" class="btn-card-action" data-action="log_ticket_from_faq" data-id="${faq.faqId}" style="padding:3px 8px;font-size:0.68rem;color:var(--bot-accent);border-color:var(--bot-accent);font-weight:700;">
+              🎟️ Log Ticket
+            </button>
+          </div>
         </div>
       </div>
     `;

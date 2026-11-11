@@ -15,6 +15,16 @@ class AppStateManager {
       search: ''
     };
 
+    // FAQs and Knowledge Base
+    this.faqs = [];
+    this.filteredFaqs = [];
+    this.selectedFaq = null;
+    this.faqFilters = {
+      category: 'ALL',
+      status: 'ALL',
+      search: ''
+    };
+
     // Active Modal
     this.activeModal = null;
     this.modalPayload = null;
@@ -35,6 +45,7 @@ class AppStateManager {
 
   notify() {
     this.applyFilters();
+    this.applyFaqFilters();
     this.listeners.forEach(fn => fn(this));
   }
 
@@ -214,6 +225,90 @@ class AppStateManager {
       unassigned,
       channels,
       resolutionRate: total > 0 ? Math.round(((resolved + closed) / total) * 100) : 0
+    };
+  }
+
+  // =========================================================================
+  // FAQ & Knowledge Base State Handlers
+  // =========================================================================
+  setFaqs(faqs) {
+    this.faqs = Array.isArray(faqs) ? faqs.filter(f => f && typeof f === 'object') : [];
+    if (this.selectedFaq) {
+      const id = this.selectedFaq.faqId || String(this.selectedFaq._id);
+      const refreshed = this.faqs.find(f => f && (f.faqId === id || String(f._id) === id));
+      if (refreshed) this.selectedFaq = refreshed;
+    }
+    this.notify();
+  }
+
+  selectFaq(faq) {
+    this.selectedFaq = faq || null;
+    this.notify();
+  }
+
+  clearSelectedFaq() {
+    this.selectedFaq = null;
+    this.notify();
+  }
+
+  setFaqFilter(key, value) {
+    this.faqFilters[key] = value;
+    this.notify();
+  }
+
+  setFaqSearch(query) {
+    this.faqFilters.search = String(query || '').toLowerCase().trim();
+    this.notify();
+  }
+
+  applyFaqFilters() {
+    let list = Array.isArray(this.faqs) ? [...this.faqs] : [];
+    list = list.filter(f => f && typeof f === 'object');
+
+    if (this.faqFilters.category && this.faqFilters.category !== 'ALL') {
+      list = list.filter(f => f.category === this.faqFilters.category);
+    }
+
+    if (this.faqFilters.status && this.faqFilters.status !== 'ALL') {
+      list = list.filter(f => f.status === this.faqFilters.status);
+    }
+
+    if (this.faqFilters.search) {
+      const q = this.faqFilters.search.toLowerCase();
+      list = list.filter(f => {
+        const titleMatch = f.title ? f.title.toLowerCase().includes(q) : false;
+        const summaryMatch = f.summary ? f.summary.toLowerCase().includes(q) : false;
+        const subcatMatch = f.subcategory ? f.subcategory.toLowerCase().includes(q) : false;
+        const tagMatch = Array.isArray(f.tags) ? f.tags.some(t => String(t).toLowerCase().includes(q)) : false;
+        const procMatch = (f.resolution && Array.isArray(f.resolution.procedures))
+          ? f.resolution.procedures.some(p => (p.title && p.title.toLowerCase().includes(q)) || (p.instruction && p.instruction.toLowerCase().includes(q)))
+          : false;
+        return titleMatch || summaryMatch || subcatMatch || tagMatch || procMatch;
+      });
+    }
+
+    this.filteredFaqs = list;
+  }
+
+  getFaqMetrics() {
+    const list = Array.isArray(this.faqs) ? this.faqs : [];
+    const total = list.length;
+    const published = list.filter(f => f.status === 'PUBLISHED').length;
+    const draft = list.filter(f => f.status === 'DRAFT').length;
+    const totalViews = list.reduce((acc, f) => acc + (Number(f.viewsCount) || 0), 0);
+    const totalHelpful = list.reduce((acc, f) => acc + (Number(f.helpfulCount) || 0), 0);
+    const totalNotHelpful = list.reduce((acc, f) => acc + (Number(f.notHelpfulCount) || 0), 0);
+    const totalVotes = totalHelpful + totalNotHelpful;
+    const satisfactionRate = totalVotes > 0 ? Math.round((totalHelpful / totalVotes) * 100) : 95;
+
+    return {
+      total,
+      published,
+      draft,
+      totalViews,
+      totalHelpful,
+      totalNotHelpful,
+      satisfactionRate
     };
   }
 }

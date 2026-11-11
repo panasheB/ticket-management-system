@@ -124,6 +124,28 @@ A mobile-first, responsive, and glassmorphic conversational assistant for end-cu
 
 ---
 
+## 📚 Knowledge Base & FAQs Management (Self-Service & Staff Portal)
+
+Both the **Customer AI Bot** and the **Operations Portal** now include a complete, synchronized Knowledge Base system with rich mock data and localStorage persistence:
+
+### 🤖 For Customers (AI Bot):
+- **Interactive FAQ Explorer**: Instant category filters (`Application`, `Billing`, `Network & VPN`, `Hardware`, `Security & 2FA`) and in-card real-time search.
+- **Step-by-Step Resolution Procedures**: Step numbered badges, bold instructions, and highlighted pro-tips.
+- **Helpful Rating & 1-Click Ticket Escalation**: Customers can rate whether a procedure resolved their issue. If not, a single click on `"🎟️ Log Ticket"` launches the creation wizard pre-filled with the category and issue description from the FAQ!
+
+### 🛠️ For Service Providers & Staff (Operations Portal):
+- **Dedicated Knowledge Base Management Tab**: Navigable from the sidebar with a live article count badge.
+- **KPI Metrics**: Total articles, published count, customer views, and customer satisfaction percentage.
+- **Full CRUD Management**:
+  - View verified resolution procedures in an interactive preview drawer.
+  - **Dynamic Step-by-Step Procedure Builder**: Add, remove, and reorder procedure steps with individual titles, instructions, and tips.
+  - Publish new FAQs or save as Draft.
+  - Edit and delete existing FAQs.
+  - Search and filter by category or publication status.
+- **Mock Data & Persistence**: Pre-seeded with 8 comprehensive troubleshooting guides (AUTH-001 login error, PAY-DUP-402 billing reversal, VPN drops, barcode scanner HID setup, 2FA reset, etc.), persisted in `localStorage` across portal and bot.
+
+---
+
 ## ☁️ Vercel Deployment & Mock / Live Mode Switching
 
 Both the **Staff Operations Portal** and the **Customer AI Bot** are engineered to run as production-ready prototypes on **Vercel** with zero configuration required.

@@ -43,6 +43,23 @@ class TicketApiClient {
       }
     }
 
+    // Initialize local FAQs store from SEED_FAQS if available
+    const savedFaqs = localStorage.getItem('helpdesk_local_faqs') || localStorage.getItem('pulse_local_faqs');
+    if (!savedFaqs) {
+      this.localFaqs = JSON.parse(JSON.stringify(window.SEED_FAQS || []));
+      this._saveLocalFaqs();
+    } else {
+      try {
+        this.localFaqs = JSON.parse(savedFaqs);
+        if (!Array.isArray(this.localFaqs) || this.localFaqs.length === 0) {
+          this.localFaqs = JSON.parse(JSON.stringify(window.SEED_FAQS || []));
+          this._saveLocalFaqs();
+        }
+      } catch (e) {
+        this.localFaqs = JSON.parse(JSON.stringify(window.SEED_FAQS || []));
+      }
+    }
+
     // Initial health check
     this.checkHealth();
   }
@@ -71,6 +88,11 @@ class TicketApiClient {
 
   _saveLocal() {
     localStorage.setItem('pulse_local_tickets', JSON.stringify(this.localTickets));
+  }
+
+  _saveLocalFaqs() {
+    localStorage.setItem('helpdesk_local_faqs', JSON.stringify(this.localFaqs || []));
+    localStorage.setItem('pulse_local_faqs', JSON.stringify(this.localFaqs || []));
   }
 
   _log(entry) {
@@ -707,10 +729,215 @@ class TicketApiClient {
     );
   }
 
+  // =========================================================================
+  // Knowledge Base & FAQ Methods (Service Provider & Customer Support)
+  // =========================================================================
+  async getAllFaqs() {
+    this._log({
+      type: 'READ',
+      endpoint: '/faqs/getAll',
+      status: 200,
+      mode: this.mode,
+      duration: '1ms',
+      summary: `Loaded ${this.localFaqs ? this.localFaqs.length : 0} FAQs from local store`
+    });
+    return Array.isArray(this.localFaqs) ? [...this.localFaqs] : [];
+  }
+
+  async getFaqById(faqId) {
+    const list = Array.isArray(this.localFaqs) ? this.localFaqs : [];
+    const faq = list.find(f => f && (f.faqId === faqId || String(f._id) === String(faqId)));
+    if (!faq) {
+      throw new Error(`FAQ with ID ${faqId} not found`);
+    }
+    // Increment view count
+    faq.viewsCount = (Number(faq.viewsCount) || 0) + 1;
+    this._saveLocalFaqs();
+    return faq;
+  }
+
+  async searchFaqs(query = '', category = 'ALL') {
+    const list = Array.isArray(this.localFaqs) ? this.localFaqs : [];
+    const q = String(query || '').toLowerCase().trim();
+    const cat = String(category || 'ALL').toUpperCase();
+
+    return list.filter(item => {
+      if (!item) return false;
+      // Category filter
+      if (cat !== 'ALL' && item.category !== cat) return false;
+
+      // Query filter
+      if (!q) return true;
+      const titleMatch = item.title ? item.title.toLowerCase().includes(q) : false;
+      const summaryMatch = item.summary ? item.summary.toLowerCase().includes(q) : false;
+      const subcatMatch = item.subcategory ? item.subcategory.toLowerCase().includes(q) : false;
+      const tagMatch = Array.isArray(item.tags) ? item.tags.some(t => String(t).toLowerCase().includes(q)) : false;
+      const procedureMatch = (item.resolution && Array.isArray(item.resolution.procedures))
+        ? item.resolution.procedures.some(p => (p.title && p.title.toLowerCase().includes(q)) || (p.instruction && p.instruction.toLowerCase().includes(q)))
+        : false;
+
+      return titleMatch || summaryMatch || subcatMatch || tagMatch || procedureMatch;
+    });
+  }
+
+  async createFaq(faqInput) {
+    const idNum = Math.floor(100 + Math.random() * 900);
+    const newFaq = {
+      faqId: `FAQ-2026-${idNum}`,
+      title: (faqInput && faqInput.title) ? String(faqInput.title).trim() : "Untitled FAQ & Troubleshooting Procedure",
+      category: (faqInput && faqInput.category) ? String(faqInput.category).toUpperCase() : "APPLICATION",
+      subcategory: (faqInput && faqInput.subcategory) ? String(faqInput.subcategory).toUpperCase() : "GENERAL",
+      summary: (faqInput && faqInput.summary) ? String(faqInput.summary).trim() : "Troubleshooting procedure and resolution guide.",
+      estimatedTime: (faqInput && faqInput.estimatedTime) ? String(faqInput.estimatedTime).trim() : "2-3 mins",
+      difficulty: (faqInput && faqInput.difficulty) ? String(faqInput.difficulty) : "Easy",
+      status: (faqInput && faqInput.status) ? String(faqInput.status).toUpperCase() : "PUBLISHED",
+      viewsCount: 0,
+      helpfulCount: 0,
+      notHelpfulCount: 0,
+      tags: Array.isArray(faqInput && faqInput.tags)
+        ? faqInput.tags
+        : (faqInput && typeof faqInput.tags === 'string'
+            ? faqInput.tags.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+            : []),
+      lastUpdated: new Date().toISOString(),
+      author: {
+        userId: (faqInput && faqInput.author && faqInput.author.userId) || "ADMIN-001",
+        name: (faqInput && faqInput.author && faqInput.author.name) || "Operations Lead"
+      },
+      resolution: {
+        overview: (faqInput && faqInput.resolution && faqInput.resolution.overview) || "Follow the step-by-step procedures below to resolve this issue.",
+        prerequisites: Array.isArray(faqInput && faqInput.resolution && faqInput.resolution.prerequisites)
+          ? faqInput.resolution.prerequisites
+          : ["Ensure active internet access.", "Have your user credentials on hand."],
+        procedures: Array.isArray(faqInput && faqInput.resolution && faqInput.resolution.procedures) && faqInput.resolution.procedures.length > 0
+          ? faqInput.resolution.procedures.map((p, idx) => ({
+              step: idx + 1,
+              title: p.title || `Step ${idx + 1}`,
+              instruction: p.instruction || "Follow standard procedure.",
+              tip: p.tip || ""
+            }))
+          : [
+              {
+                step: 1,
+                title: "Initial Check",
+                instruction: "Review error logs and verify application status.",
+                tip: "Make sure all software is up to date."
+              }
+            ],
+        relatedLinks: Array.isArray(faqInput && faqInput.resolution && faqInput.resolution.relatedLinks)
+          ? faqInput.resolution.relatedLinks
+          : [{ label: "Help Documentation", url: "#" }],
+        escalationAdvice: (faqInput && faqInput.resolution && faqInput.resolution.escalationAdvice) || "If these steps do not solve the problem, submit a support ticket to our technical operations team."
+      }
+    };
+
+    if (!Array.isArray(this.localFaqs)) this.localFaqs = [];
+    this.localFaqs.unshift(newFaq);
+    this._saveLocalFaqs();
+
+    this._log({
+      type: 'WRITE',
+      endpoint: '/faqs/create',
+      status: 201,
+      mode: this.mode,
+      duration: '2ms',
+      summary: `Created FAQ ${newFaq.faqId}: ${newFaq.title}`
+    });
+
+    return {
+      success: true,
+      message: "FAQ and resolution procedure published successfully",
+      faq: newFaq
+    };
+  }
+
+  async updateFaq(faqId, updates) {
+    const list = Array.isArray(this.localFaqs) ? this.localFaqs : [];
+    const faq = list.find(f => f && (f.faqId === faqId || String(f._id) === String(faqId)));
+    if (!faq) {
+      throw new Error(`FAQ with ID ${faqId} not found`);
+    }
+
+    if (updates.title) faq.title = updates.title;
+    if (updates.category) faq.category = updates.category.toUpperCase();
+    if (updates.subcategory) faq.subcategory = updates.subcategory.toUpperCase();
+    if (updates.summary) faq.summary = updates.summary;
+    if (updates.estimatedTime) faq.estimatedTime = updates.estimatedTime;
+    if (updates.difficulty) faq.difficulty = updates.difficulty;
+    if (updates.status) faq.status = updates.status.toUpperCase();
+    if (updates.tags) {
+      faq.tags = Array.isArray(updates.tags)
+        ? updates.tags
+        : updates.tags.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+    }
+    if (updates.resolution) {
+      faq.resolution = {
+        ...faq.resolution,
+        ...updates.resolution
+      };
+    }
+    faq.lastUpdated = new Date().toISOString();
+    this._saveLocalFaqs();
+
+    this._log({
+      type: 'WRITE',
+      endpoint: `/faqs/update/${faqId}`,
+      status: 200,
+      mode: this.mode,
+      duration: '2ms',
+      summary: `Updated FAQ ${faqId}: ${faq.title}`
+    });
+
+    return {
+      success: true,
+      message: "FAQ updated successfully",
+      faq
+    };
+  }
+
+  async deleteFaq(faqId) {
+    const initialLen = this.localFaqs ? this.localFaqs.length : 0;
+    this.localFaqs = (this.localFaqs || []).filter(f => f && f.faqId !== faqId && String(f._id) !== String(faqId));
+    this._saveLocalFaqs();
+
+    this._log({
+      type: 'DELETE',
+      endpoint: `/faqs/delete/${faqId}`,
+      status: 200,
+      mode: this.mode,
+      duration: '1ms',
+      summary: `Deleted FAQ ${faqId}`
+    });
+
+    return {
+      success: true,
+      message: `FAQ ${faqId} deleted`
+    };
+  }
+
+  async voteFaq(faqId, isHelpful) {
+    const list = Array.isArray(this.localFaqs) ? this.localFaqs : [];
+    const faq = list.find(f => f && (f.faqId === faqId || String(f._id) === String(faqId)));
+    if (!faq) return null;
+
+    if (isHelpful) {
+      faq.helpfulCount = (Number(faq.helpfulCount) || 0) + 1;
+    } else {
+      faq.notHelpfulCount = (Number(faq.notHelpfulCount) || 0) + 1;
+    }
+    this._saveLocalFaqs();
+    return {
+      helpfulCount: faq.helpfulCount,
+      notHelpfulCount: faq.notHelpfulCount
+    };
+  }
+
   // Reset store helper
   resetMockData() {
     this.localTickets = JSON.parse(JSON.stringify(window.SEED_TICKETS || []));
+    this.localFaqs = JSON.parse(JSON.stringify(window.SEED_FAQS || []));
     this._saveLocal();
+    this._saveLocalFaqs();
   }
 }
 

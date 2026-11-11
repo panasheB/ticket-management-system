@@ -1387,6 +1387,24 @@ textarea.form-control {
 .api-method.PATCH { background: #F59E0B; color: white; }
 .api-method.DELETE { background: #EF4444; color: white; }
 
+/* Knowledge Base & FAQs Styles */
+.faq-table-row:hover {
+  background-color: var(--bg-tertiary);
+  cursor: pointer;
+}
+
+.faq-step-card {
+  transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+.faq-step-card:hover {
+  border-color: var(--accent-primary-border);
+}
+
+.btn-remove-faq-step:hover {
+  opacity: 0.8;
+}
+
 @media (max-width: 1024px) {
   :root {
     --sidebar-width: 46px;
